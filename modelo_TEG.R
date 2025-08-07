@@ -1,7 +1,7 @@
-ibrary(WDI)
+library(WDI)
 library(dplyr)
 
-# primero aquí haré mi construccion del data frame 
+# primero aquÃ­ harÃ© mi construccion del data frame 
 
 data_1 <- WDI( country = "all",
                indicator = c("BN.CAB.XOKA.CD",
@@ -43,23 +43,23 @@ data_1 <- data_1 %>%
 
 
 
-### Filtré los datos para los países de interés (América Latina y OCDE)
+### FiltrÃ© los datos para los paÃ­ses de interÃ©s (AmÃ©rica Latina y OCDE)
 paises_latam <- c("ARG", "BRA", "CHL", "COL", "CRI", "ECU", "MEX", "PER", "URY", "VEN")
 paises_ocde <- c("CAN", "USA", "DEU", "ESP", "FRA", "ITA", "PRT", "KOR")
 
-### Creé un subset de datos
+### CreÃ© un subset de datos
 data_latam <- data_1[data_1$iso3c %in% paises_latam,]
 data_ocde <- data_1[data_1$iso3c %in% paises_ocde,]
 data_total <- rbind(data_latam, data_ocde)
 
 
 
-### use random forest para la imputación de datos
+### use random forest para la imputaciÃ³n de datos
 
 library(missForest)
 
 
-### Seleccioné las variables para la imputación (incluyendo los 6 WGI + tasa interés)
+### SeleccionÃ© las variables para la imputaciÃ³n (incluyendo los 6 WGI + tasa interÃ©s)
 vars_imputar <- c("CC_control_corrupcion", "GE_efectividad_gobierno", "PV_estabilidad_politica",
                   "RQ_calidad_regulatoria", "RL_estado_de_derecho", "VA_voz_y_rendicion_cuentas", 
                   "FR_tasa_interes_real","BX_inversion_extranjera_directa","NY_crecimiento_pib","NE_formacion_bruta_capital","BN_balanza_cuenta_corriente")
@@ -67,17 +67,17 @@ vars_imputar <- c("CC_control_corrupcion", "GE_efectividad_gobierno", "PV_estabi
 set.seed(123)
 imputacion_rf <- missForest(data_total[, vars_imputar])
 
-### Extrajé los datos imputados
+### ExtrajÃ© los datos imputados
 data_imputada_rf <- imputacion_rf$ximp
 
-### chequee el error de imputación que me da muy alto con un valor de 0.5797
+### chequee el error de imputaciÃ³n que me da muy alto con un valor de 0.5797
 print(imputacion_rf$OOBerror)
 
 
 
 
 
-### Normalicé los  datos (Random Forest es invariante a escala, pero ayuda numéricamente)
+### NormalicÃ© los  datos (Random Forest es invariante a escala, pero ayuda numÃ©ricamente)
 data_normalized <- scale(data_total[, vars_imputar])
 
 ### Imputar y luego revertir escala
@@ -91,14 +91,14 @@ data_imputada_raw <- t(apply(data_imputada_norm, 1, function(x) x * attr(data_no
 data_imputada_raw <- as.data.frame(data_imputada_raw)
 colnames(data_imputada_raw) <- vars_imputar  # Asegurar que los nombres se mantengan
 
-### Chequee summary estadístico
+### Chequee summary estadÃ­stico
 summary(data_imputada_raw)
 
-### Eliminé las columnas originales (no imputadas) del dataset total
+### EliminÃ© las columnas originales (no imputadas) del dataset total
 data_total_clean <- data_total %>% 
   select(-all_of(vars_imputar))
 
-### Combiné con los datos imputados
+### CombinÃ© con los datos imputados
 data_total_imputed <- bind_cols(data_total_clean, data_imputada_raw)
 
 
@@ -120,39 +120,39 @@ summary(pca_result)$eig
 
 library(ggplot2)
 
-# Comparar distribuciones antes/después 
+# Comparar distribuciones antes/despuÃ©s 
 ggplot() +
   geom_density(data = data_total, aes(x = CC_control_corrupcion, color = "Original")) +
   geom_density(data = data_total_imputed, aes(x = CC_control_corrupcion, color = "Imputado")) +
-  labs(title = "Distribución de control de corrupcion: Original vs Imputado")
+  labs(title = "DistribuciÃ³n de control de corrupcion: Original vs Imputado")
 
 
 ggplot() +
   geom_density(data = data_total, aes(x = GE_efectividad_gobierno, color = "Original")) +
   geom_density(data = data_total_imputed, aes(x = GE_efectividad_gobierno, color = "Imputado")) +
-  labs(title = "Distribución de efectividad de gobierno: Original vs Imputado")
+  labs(title = "DistribuciÃ³n de efectividad de gobierno: Original vs Imputado")
 
 
 ggplot() +
   geom_density(data = data_total, aes(x = PV_estabilidad_politica, color = "Original")) +
   geom_density(data = data_total_imputed, aes(x = PV_estabilidad_politica, color = "Imputado")) +
-  labs(title = "Distribución de estabilidad politica: Original vs Imputado")
+  labs(title = "DistribuciÃ³n de estabilidad politica: Original vs Imputado")
 
 ggplot() +
   geom_density(data = data_total, aes(x = RQ_calidad_regulatoria, color = "Original")) +
   geom_density(data = data_total_imputed, aes(x = RQ_calidad_regulatoria, color = "Imputado")) +
-  labs(title = "Distribución de calidad regulatoria: Original vs Imputado")
+  labs(title = "DistribuciÃ³n de calidad regulatoria: Original vs Imputado")
 
 
 ggplot() +
   geom_density(data = data_total, aes(x = RL_estado_de_derecho, color = "Original")) +
   geom_density(data = data_total_imputed, aes(x = RL_estado_de_derecho, color = "Imputado")) +
-  labs(title = "Distribución de estado de derecho: Original vs Imputado")
+  labs(title = "DistribuciÃ³n de estado de derecho: Original vs Imputado")
 
 ggplot() +
   geom_density(data = data_total, aes(x = VA_voz_y_rendicion_cuentas, color = "Original")) +
   geom_density(data = data_total_imputed, aes(x = VA_voz_y_rendicion_cuentas, color = "Imputado")) +
-  labs(title = "Distribución de voz y rendicion de cuentas: Original vs Imputado")
+  labs(title = "DistribuciÃ³n de voz y rendicion de cuentas: Original vs Imputado")
 
 ###modelo panel con datos imputados
 library(plm)
@@ -161,4 +161,5 @@ modelo_fe <- plm(NE_formacion_bruta_capital ~  gobernanza +
                  data = data_total_imputed,
                  index = c("iso3c", "year"),
                  model = "within")
+
 summary(modelo_fe)
